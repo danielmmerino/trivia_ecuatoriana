@@ -1,25 +1,92 @@
-{
-  "pregunta":"Cual es la capital de Ecuador?",
-  "opciones":[
-    {
-      "orden":"1",
-      "opcion":"Quito",
-      "esCorrecta": "true"
-    },
-    {
-      "orden":"2",
-      "opcion":"Ambato",
-      "esCorrecta": "false"
-    },
-    {
-      "orden":"3",
-      "opcion":"Guayaquil",
-      "esCorrecta": "false"
-    },
-    {
-      "orden":"4",
-      "opcion":"Riobamba",
-      "esCorrecta": "false"
-    }
-  ]
-}
+[
+  {
+    "pregunta": "¿Cuál es la capital de Ecuador?",
+    "opciones": [
+      { "orden": "1", "opcion": "Quito", "esCorrecta": "true" },
+      { "orden": "2", "opcion": "Ambato", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "Guayaquil", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Riobamba", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿En qué provincia se encuentra la Mitad del Mundo?",
+    "opciones": [
+      { "orden": "1", "opcion": "Pichincha", "esCorrecta": "true" },
+      { "orden": "2", "opcion": "Tungurahua", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "Manabí", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Imbabura", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Cuál es el plato típico representativo de Cuenca?",
+    "opciones": [
+      { "orden": "1", "opcion": "Hornado", "esCorrecta": "false" },
+      { "orden": "2", "opcion": "Fritada", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "Mote pillo", "esCorrecta": "true" },
+      { "orden": "4", "opcion": "Ceviche", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Qué grupo musical es originario de Ecuador?",
+    "opciones": [
+      { "orden": "1", "opcion": "Chicha Libre", "esCorrecta": "false" },
+      { "orden": "2", "opcion": "Jayac", "esCorrecta": "true" },
+      { "orden": "3", "opcion": "Inti-Illimani", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Los Kjarkas", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Quién pintó la serie 'Los Habitantes del Silencio'?",
+    "opciones": [
+      { "orden": "1", "opcion": "Oswaldo Guayasamín", "esCorrecta": "true" },
+      { "orden": "2", "opcion": "Eduardo Kingman", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "Camilo Egas", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Araceli Gilbert", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Cuál es el principal deporte practicado en Ecuador?",
+    "opciones": [
+      { "orden": "1", "opcion": "Fútbol", "esCorrecta": "true" },
+      { "orden": "2", "opcion": "Vóley", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "Atletismo", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Ciclismo", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Qué ciudad es conocida como la 'Perla del Pacífico'?",
+    "opciones": [
+      { "orden": "1", "opcion": "Esmeraldas", "esCorrecta": "false" },
+      { "orden": "2", "opcion": "Guayaquil", "esCorrecta": "true" },
+      { "orden": "3", "opcion": "Manta", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Salinas", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿En qué año Ecuador adoptó el dólar como moneda oficial?",
+    "opciones": [
+      { "orden": "1", "opcion": "2000", "esCorrecta": "true" },
+      { "orden": "2", "opcion": "1999", "esCorrecta": "false" },
+      { "orden": "3", "opcion": "2001", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "2002", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Qué animal es símbolo de las Islas Galápagos?",
+    "opciones": [
+      { "orden": "1", "opcion": "Tiburón martillo", "esCorrecta": "false" },
+      { "orden": "2", "opcion": "Tortuga gigante", "esCorrecta": "true" },
+      { "orden": "3", "opcion": "Lobo marino", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Iguana marina", "esCorrecta": "false" }
+    ]
+  },
+  {
+    "pregunta": "¿Qué fiesta tradicional se celebra en noviembre en Ecuador?",
+    "opciones": [
+      { "orden": "1", "opcion": "Inti Raymi", "esCorrecta": "false" },
+      { "orden": "2", "opcion": "Día de los Difuntos", "esCorrecta": "true" },
+      { "orden": "3", "opcion": "Carnaval", "esCorrecta": "false" },
+      { "orden": "4", "opcion": "Fiestas de Quito", "esCorrecta": "false" }
+    ]
+  }
+]
