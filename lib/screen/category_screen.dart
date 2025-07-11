@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'preguntas_screen.dart';
 
 class CategoryScreen extends StatelessWidget {
   const CategoryScreen({super.key});
@@ -46,7 +47,11 @@ class CategoryScreen extends StatelessWidget {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
-                // TODO: Navegar a pantalla de preguntas
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PreguntasScreen(),
+                  ),
+                );
               },
               child: const Text('COMENZAR TRIVIA'),
             ),

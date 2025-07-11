@@ -1,0 +1,25 @@
+{
+  "pregunta":"Cual es la capital de Ecuador?",
+  "opciones":[
+    {
+      "orden":"1",
+      "opcion":"Quito",
+      "esCorrecta": "true"
+    },
+    {
+      "orden":"2",
+      "opcion":"Ambato",
+      "esCorrecta": "false"
+    },
+    {
+      "orden":"3",
+      "opcion":"Guayaquil",
+      "esCorrecta": "false"
+    },
+    {
+      "orden":"4",
+      "opcion":"Riobamba",
+      "esCorrecta": "false"
+    }
+  ]
+}
