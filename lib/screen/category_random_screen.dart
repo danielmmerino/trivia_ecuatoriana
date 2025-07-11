@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'preguntas_screen.dart';
 
 /// Screen that displays a roulette style wheel with different trivia
 /// categories. When the wheel is tapped it spins and stops on a random
@@ -73,6 +74,11 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
     setState(() {
       _selectedCategory = _categories[index];
     });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const PreguntasScreen(),
+      ),
+    );
   }
 
   @override

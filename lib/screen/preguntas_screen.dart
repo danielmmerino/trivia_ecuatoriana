@@ -16,6 +16,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     with SingleTickerProviderStateMixin {
   late Future<Question> _futureQuestion;
   bool _showCorrect = false;
+  bool _showIncorrect = false;
   late AnimationController _controller;
 
   @override
@@ -38,9 +39,15 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     if (option.esCorrecta) {
       setState(() {
         _showCorrect = true;
+        _showIncorrect = false;
       });
-      _controller.forward(from: 0.0);
+    } else {
+      setState(() {
+        _showIncorrect = true;
+        _showCorrect = false;
+      });
     }
+    _controller.forward(from: 0.0);
   }
 
   Widget _buildCorrectAnimation() {
@@ -60,6 +67,30 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+
+  Widget _buildIncorrectAnimation() {
+    return _showIncorrect
+        ? Center(
+            child: ScaleTransition(
+              scale: _controller,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.cancel, size: 80, color: Colors.red),
+                  SizedBox(height: 8),
+                  Text(
+                    'Respuesta incorrecta',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red),
                   ),
                 ],
               ),
@@ -110,6 +141,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                 ),
               ),
               _buildCorrectAnimation(),
+              _buildIncorrectAnimation(),
             ],
           );
         },
