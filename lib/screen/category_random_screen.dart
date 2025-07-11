@@ -32,6 +32,7 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
               _determineSelectedCategory();
             }
           });
+    _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
     _loadCategories();
   }
 
