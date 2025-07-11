@@ -95,18 +95,25 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
               child: SizedBox(
                 width: 250,
                 height: 250,
-                child: AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Transform.rotate(
-                      angle: _animation.value,
-                      child: child,
-                    );
-                  },
-                  child: CustomPaint(
-                    painter:
-                        _WheelPainter(categories: _categories),
-                  ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _animation.value,
+                          child: child,
+                        );
+                      },
+                      child:
+                          CustomPaint(painter: _WheelPainter(categories: _categories)),
+                    ),
+                    const CustomPaint(
+                      size: Size(250, 250),
+                      painter: _ArrowPainter(),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -173,29 +180,33 @@ class _WheelPainter extends CustomPainter {
       textPainter.paint(canvas, offset);
     }
 
-    // draw arrow
-    final arrowPaint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 3;
-    canvas.drawLine(
-      Offset(center.dx, 0),
-      Offset(center.dx, 20),
-      arrowPaint,
-    );
-    canvas.drawPolygon([
-      Offset(center.dx - 10, 20),
-      Offset(center.dx + 10, 20),
-      Offset(center.dx, 35)
-    ], arrowPaint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-extension on Canvas {
-  void drawPolygon(List<Offset> points, Paint paint) {
-    final path = Path()..addPolygon(points, true);
-    drawPath(path, paint);
+class _ArrowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centerX = size.width / 2;
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 3
+      ..style = PaintingStyle.fill;
+    canvas.drawLine(
+      Offset(centerX, 0),
+      Offset(centerX, 20),
+      paint,
+    );
+    final path = Path()
+      ..moveTo(centerX - 10, 20)
+      ..lineTo(centerX + 10, 20)
+      ..lineTo(centerX, 35)
+      ..close();
+    canvas.drawPath(path, paint);
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

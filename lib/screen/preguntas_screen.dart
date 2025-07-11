@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -31,8 +32,11 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   Future<Question> _loadQuestion() async {
     final data = await rootBundle.loadString('assets/data/pregunta.json');
-    final jsonMap = json.decode(data) as Map<String, dynamic>;
-    return Question.fromJson(jsonMap);
+    final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
+    final random = Random();
+    final Map<String, dynamic> questionMap =
+        jsonList[random.nextInt(jsonList.length)] as Map<String, dynamic>;
+    return Question.fromJson(questionMap);
   }
 
   void _onOptionSelected(Option option) {
