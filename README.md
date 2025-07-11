@@ -1,16 +1,39 @@
-# trivia_ecuatoriana
+# Trivia Ecuatoriana
 
-A new Flutter project.
+Aplicación Flutter que presenta una trivia básica con categorías. El proyecto
+sirve como ejemplo de cómo leer archivos JSON, dibujar animaciones sencillas y
+navegar entre pantallas dentro de Flutter.
 
-## Getting Started
+## Funcionalidades
 
-This project is a starting point for a Flutter application.
+- **Selección de categoría:** `CategoryScreen` muestra un tablero con las
+  categorías disponibles y un botón para iniciar la trivia.
+- **Ruleta al azar:** `CategoryRandomScreen` implementa una ruleta que toma las
+  categorías desde `assets/data/categories.json` y muestra una animación de
+  giro hasta detenerse en una opción aleatoria.
+- **Preguntas de la trivia:** `PreguntasScreen` lee la pregunta y las opciones
+  desde `assets/data/pregunta.json`. Al elegir la opción correcta se despliega
+  una pequeña animación indicando el acierto.
+- **Modelos de datos:** en `lib/models/question.dart` se encuentran las clases
+  `Question` y `Option` encargadas de mapear la información proveniente de los
+  archivos JSON.
 
-A few resources to get you started if this is your first Flutter project:
+## Estructura del código
+
+- `lib/main.dart` inicializa la aplicación y define `CategoryScreen` como la
+  pantalla principal.
+- `lib/screen/` contiene las pantallas de la aplicación:
+  - `category_screen.dart` muestra las categorías.
+  - `category_random_screen.dart` dibuja y anima la ruleta.
+  - `preguntas_screen.dart` gestiona la visualización de las preguntas y la
+    lógica para marcar respuestas correctas.
+- `assets/data/` almacena los archivos JSON que se leen en las pantallas.
+
+Para ejecutar las pruebas integradas se utiliza `flutter test`, donde se incluye
+un test de ejemplo en `test/widget_test.dart`.
+
+## Recursos útiles
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [Documentación oficial de Flutter](https://docs.flutter.dev/)
