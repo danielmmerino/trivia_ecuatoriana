@@ -103,13 +103,15 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
                       builder: (context, child) {
                         return Transform.rotate(
                           angle: _animation.value,
-                          child: child,
+                          child: CustomPaint(
+                            size: const Size(
+                                250, 250), // <- importante para que se pinte
+                            painter: _WheelPainter(categories: _categories),
+                          ),
                         );
                       },
-                      child:
-                          CustomPaint(painter: _WheelPainter(categories: _categories)),
                     ),
-                    const CustomPaint(
+                    CustomPaint(
                       size: Size(250, 250),
                       painter: _ArrowPainter(),
                     ),
@@ -179,7 +181,6 @@ class _WheelPainter extends CustomPainter {
       );
       textPainter.paint(canvas, offset);
     }
-
   }
 
   @override
