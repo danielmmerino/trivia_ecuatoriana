@@ -101,7 +101,7 @@ class CategoryItem extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: NetworkImage(iconUrl),
+          backgroundImage: AssetImage('assets/$iconUrl'),
           backgroundColor: Colors.blueAccent,
         ),
         const SizedBox(height: 8),

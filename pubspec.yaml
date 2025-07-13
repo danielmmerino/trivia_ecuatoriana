@@ -63,6 +63,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/pregunta.json
+    - assets/imagenes/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
