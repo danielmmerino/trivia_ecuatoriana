@@ -47,10 +47,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: GridView.builder(
                     shrinkWrap: true,
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
                     itemCount: categories.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                    ),
                     itemBuilder: (context, index) {
                       final c = categories[index];
                       return CategoryItem(iconUrl: c.icono, label: c.nombre);

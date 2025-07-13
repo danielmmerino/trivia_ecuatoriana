@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service that handles authentication and stores the JWT token.
 class AuthService {
@@ -19,7 +20,7 @@ class AuthService {
   String? token;
 
   /// Login using fixed credentials when the user continues as guest.
-  Future<void> loginAsGuest() async {
+  Future<String> loginAsGuest() async {
     final response = await http.post(
       Uri.parse('${baseUrl}api/login'),
       headers: {
@@ -33,16 +34,19 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data =
-          jsonDecode(response.body) as Map<String, dynamic>;
-      token = data['token']?.toString();
-    } else {
-      throw Exception('Failed to login as guest');
+      final Map<String, dynamic> data = json.decode(response.body);
+      final token = data['token'];
+      if (token is String) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        return token;
+      }
     }
+    throw Exception('Error al realizar login');
   }
 
   /// Login for social network sign in.
-  Future<void> socialLogin() async {
+  Future<String> socialLogin() async {
     final response = await http.post(
       Uri.parse('${baseUrl}api/social_login'),
       headers: {
@@ -53,11 +57,19 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data =
-          jsonDecode(response.body) as Map<String, dynamic>;
-      token = data['token']?.toString();
-    } else {
-      throw Exception('Failed to login with social network');
+      final Map<String, dynamic> data = json.decode(response.body);
+      final token = data['token'];
+      if (token is String) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        return token;
+      }
     }
+    throw Exception('Error al realizar login');
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
   }
 }

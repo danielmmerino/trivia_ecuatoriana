@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'category_random_screen.dart';
+import 'category_screen.dart';
 
 /// Pantalla de inicio de sesión con opciones para autenticarse
 /// mediante redes sociales o continuar como invitado.
@@ -32,7 +33,7 @@ class LoginScreen extends StatelessWidget {
   void _onLoginComplete(BuildContext context) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => const CategoryRandomScreen(),
+        builder: (context) => const CategoryScreen(),
       ),
     );
   }
