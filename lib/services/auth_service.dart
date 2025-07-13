@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Service that handles authentication and stores the JWT token.
 class AuthService {
@@ -9,8 +10,11 @@ class AuthService {
   static final AuthService _instance = AuthService._();
   factory AuthService() => _instance;
 
-  /// Base url of the backend. Replace `{{URL}}` with the real host.
-  final String baseUrl = '{{URL}}';
+  /// Base url of the backend loaded from the environment.
+  final String baseUrl = dotenv.env['API_BASE_URL'] ?? '';
+
+  /// Secret key loaded from the environment for API authentication.
+  final String secretKey = dotenv.env['SECRET_KEY'] ?? '';
 
   String? token;
 
@@ -18,7 +22,10 @@ class AuthService {
   Future<void> loginAsGuest() async {
     final response = await http.post(
       Uri.parse('${baseUrl}api/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': secretKey,
+      },
       body: jsonEncode({
         'email': 'daniel@gmail.com',
         'password': '123456',
@@ -38,7 +45,10 @@ class AuthService {
   Future<void> socialLogin() async {
     final response = await http.post(
       Uri.parse('${baseUrl}api/social_login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': secretKey,
+      },
       body: jsonEncode({'email': 'juan@gmail.com'}),
     );
 
