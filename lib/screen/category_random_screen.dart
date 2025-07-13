@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'preguntas_screen.dart';
+import '../services/category_service.dart';
 
 /// Screen that displays a roulette style wheel with different trivia
 /// categories. When the wheel is tapped it spins and stops on a random
@@ -43,15 +43,16 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
   }
 
   Future<void> _loadCategories() async {
-    final data = await DefaultAssetBundle.of(context)
-        .loadString('assets/data/categories.json');
-    final jsonData = json.decode(data) as Map<String, dynamic>;
-    final items = jsonData['categories'] as List<dynamic>;
-    setState(() {
-      _categories
-        ..clear()
-        ..addAll(items.map((e) => e.toString()));
-    });
+    try {
+      final categories = await CategoryService().fetchCategories();
+      setState(() {
+        _categories
+          ..clear()
+          ..addAll(categories.map((e) => e.nombre));
+      });
+    } catch (_) {
+      // In case of error keep categories empty
+    }
   }
 
   void _spinWheel() {
