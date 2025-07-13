@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'preguntas_screen.dart';
+import 'new_question_screen.dart';
 import '../models/category.dart';
 import '../services/category_service.dart';
 
@@ -78,6 +79,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     );
                   },
                   child: const Text('COMENZAR TRIVIA'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow,
+                    foregroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
+                    textStyle: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const NewQuestionScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('CREAR PREGUNTAS'),
                 ),
                 const SizedBox(height: 40),
               ],
