@@ -35,7 +35,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFA726), // Fondo naranja
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: FutureBuilder<List<Category>>(
           future: _futureCategories,
@@ -44,82 +44,69 @@ class _CategoryScreenState extends State<CategoryScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             final categories = snapshot.data!;
-            return Column(
-              children: [
-                const SizedBox(height: 40),
-                const Text(
-                  'CATEGORÍAS',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.yellow,
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Categorías',
+                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Aciertos: $_correctAnswers',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: categories.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 20,
+                  const SizedBox(height: 6),
+                  Text(
+                    'Aciertos: $_correctAnswers',
+                    style: const TextStyle(color: Colors.black54, fontSize: 16),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: GridView.builder(
+                      itemCount: categories.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                        childAspectRatio: 0.9,
+                      ),
+                      itemBuilder: (context, index) {
+                        final c = categories[index];
+                        return CategoryItem(
+                          iconUrl: c.icono,
+                          label: c.nombre,
+                          onTap: () => _openQuestion(c.id),
+                        );
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      final c = categories[index];
-                      return CategoryItem(
-                        iconUrl: c.icono,
-                        label: c.nombre,
-                        onTap: () => _openQuestion(c.id),
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton.icon(
+                    onPressed: () {
+                      if (categories.isNotEmpty) {
+                        _openQuestion(categories.first.id);
+                      }
+                    },
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text('Comenzar trivia'),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const NewQuestionScreen(),
+                        ),
                       );
                     },
+                    icon: const Icon(Icons.edit_note),
+                    label: const Text('Crear preguntas'),
                   ),
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow,
-                    foregroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
-                    textStyle: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () {
-                    if (categories.isNotEmpty) {
-                      _openQuestion(categories.first.id);
-                    }
-                  },
-                  child: const Text('COMENZAR TRIVIA'),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow,
-                    foregroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
-                    textStyle: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const NewQuestionScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text('CREAR PREGUNTAS'),
-                ),
-                const SizedBox(height: 40),
-              ],
+                ],
+              ),
             );
           },
         ),
@@ -142,22 +129,36 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: AssetImage('assets/$iconUrl'),
-            backgroundColor: Colors.blueAccent,
+    return Material(
+      elevation: 1,
+      borderRadius: BorderRadius.circular(16),
+      color: Colors.white,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 36,
+                backgroundImage: AssetImage('assets/$iconUrl'),
+                backgroundColor: Colors.grey[200],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
-          )
-        ],
+        ),
       ),
     );
   }
