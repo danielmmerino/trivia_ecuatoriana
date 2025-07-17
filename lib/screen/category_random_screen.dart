@@ -78,7 +78,7 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
     });
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const PreguntasScreen(),
+        builder: (_) => const PreguntasScreen(categoryId: 1),
       ),
     );
   }

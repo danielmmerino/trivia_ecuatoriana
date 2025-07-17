@@ -1,13 +1,12 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/question.dart';
+import '../services/question_service.dart';
 
 class PreguntasScreen extends StatefulWidget {
-  const PreguntasScreen({super.key});
+  const PreguntasScreen({super.key, required this.categoryId});
+
+  final int categoryId;
 
   @override
   State<PreguntasScreen> createState() => _PreguntasScreenState();
@@ -23,20 +22,19 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   @override
   void initState() {
     super.initState();
-    _futureQuestion = _loadQuestion();
+    _futureQuestion = _fetchQuestion();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
   }
 
-  Future<Question> _loadQuestion() async {
-    final data = await rootBundle.loadString('assets/data/pregunta.json');
-    final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
-    final random = Random();
-    final Map<String, dynamic> questionMap =
-        jsonList[random.nextInt(jsonList.length)] as Map<String, dynamic>;
-    return Question.fromJson(questionMap);
+  Future<Question> _fetchQuestion() async {
+    final questions = await QuestionService().fetchQuestions(widget.categoryId);
+    if (questions.isEmpty) {
+      throw Exception('Sin preguntas disponibles');
+    }
+    return questions.first;
   }
 
   void _onOptionSelected(Option option) {
@@ -52,6 +50,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       });
     }
     _controller.forward(from: 0.0);
+    Future.delayed(const Duration(milliseconds: 800), () {
+      Navigator.pop(context, option.esCorrecta);
+    });
   }
 
   Widget _buildCorrectAnimation() {
