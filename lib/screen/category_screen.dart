@@ -13,11 +13,23 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   late Future<List<Category>> _futureCategories;
+  int _correctAnswers = 0;
 
   @override
   void initState() {
     super.initState();
     _futureCategories = CategoryService().fetchCategories();
+  }
+
+  Future<void> _openQuestion(int categoryId) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PreguntasScreen(categoryId: categoryId),
+      ),
+    );
+    if (result == true) {
+      setState(() => _correctAnswers++);
+    }
   }
 
   @override
@@ -43,6 +55,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     color: Colors.yellow,
                   ),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  'Aciertos: $_correctAnswers',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                ),
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -57,7 +74,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                     itemBuilder: (context, index) {
                       final c = categories[index];
-                      return CategoryItem(iconUrl: c.icono, label: c.nombre);
+                      return CategoryItem(
+                        iconUrl: c.icono,
+                        label: c.nombre,
+                        onTap: () => _openQuestion(c.id),
+                      );
                     },
                   ),
                 ),
@@ -72,11 +93,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const PreguntasScreen(),
-                      ),
-                    );
+                    if (categories.isNotEmpty) {
+                      _openQuestion(categories.first.id);
+                    }
                   },
                   child: const Text('COMENZAR TRIVIA'),
                 ),
@@ -112,25 +131,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
 class CategoryItem extends StatelessWidget {
   final String iconUrl;
   final String label;
+  final VoidCallback onTap;
 
-  const CategoryItem({super.key, required this.iconUrl, required this.label});
+  const CategoryItem({
+    super.key,
+    required this.iconUrl,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundImage: AssetImage('assets/$iconUrl'),
-          backgroundColor: Colors.blueAccent,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
-        )
-      ],
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 40,
+            backgroundImage: AssetImage('assets/$iconUrl'),
+            backgroundColor: Colors.blueAccent,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+          )
+        ],
+      ),
     );
   }
 }
