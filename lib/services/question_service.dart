@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 import 'auth_service.dart';
 import '../models/question.dart';
@@ -25,8 +26,7 @@ class QuestionService {
     }
   }
 
-  Future<List<Question>> fetchQuestions(int categoryId,
-      {int limit = 2, int difficultyId = 1}) async {
+  Future<List<Question>> fetchQuestions(int categoryId) async {
     final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://127.0.0.1:8000';
     final url = Uri.parse('${baseUrl}api/preguntas');
     final token = await AuthService().getToken();
@@ -39,8 +39,8 @@ class QuestionService {
     }
     final body = {
       'id_categoria': categoryId,
-      'limit': limit,
-      'id_dificultad': difficultyId,
+      'limit': 1,
+      'id_dificultad': Random().nextInt(3) + 1,
     };
 
     final response =
