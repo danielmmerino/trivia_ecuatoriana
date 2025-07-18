@@ -35,6 +35,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
+  Future<void> _startRandomTrivia(List<Category> categories) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PreguntasScreen(
+          categories: categories,
+        ),
+      ),
+    );
+    if (result == true) {
+      setState(() => _correctAnswers++);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +103,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   FilledButton.icon(
                     onPressed: () {
                       if (categories.isNotEmpty) {
-                        _openQuestion(categories.first);
+                        _startRandomTrivia(categories);
                       }
                     },
                     icon: const Icon(Icons.play_arrow),
