@@ -6,9 +6,22 @@ import '../models/category.dart';
 import '../services/question_service.dart';
 
 class PreguntasScreen extends StatefulWidget {
-  const PreguntasScreen({super.key, required this.category});
 
-  final Category category;
+  const PreguntasScreen({
+    super.key,
+    required this.categoryId,
+    this.correctCount = 0,
+    this.incorrectCount = 0,
+    this.questionNumber = 0,
+    this.totalQuestions = 0,
+  });
+
+  final int categoryId;
+  final int correctCount;
+  final int incorrectCount;
+  final int questionNumber;
+  final int totalQuestions;
+
 
   @override
   State<PreguntasScreen> createState() => _PreguntasScreenState();
@@ -223,6 +236,21 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (widget.totalQuestions > 0)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pregunta ${widget.questionNumber} de ${widget.totalQuestions}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            'Correctas: ${widget.correctCount}  Incorrectas: ${widget.incorrectCount}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     Text(
                       question.pregunta,
                       style: const TextStyle(
