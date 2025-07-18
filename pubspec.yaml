@@ -66,6 +66,7 @@ flutter:
     - assets/data/pregunta.json
     - assets/imagenes/
     - assets/sounds/
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
