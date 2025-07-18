@@ -32,6 +32,20 @@ navegar entre pantallas dentro de Flutter.
 Para ejecutar las pruebas integradas se utiliza `flutter test`, donde se incluye
 un test de ejemplo en `test/widget_test.dart`.
 
+## Configuración del entorno
+
+La aplicación utiliza el paquete `flutter_dotenv` para cargar variables de
+entorno desde un archivo `.env` ubicado en la raíz del proyecto. Un archivo
+de ejemplo llamado `.env.example` se incluye en el repositorio. Copie este
+archivo y renómbrelo como `.env` para definir la URL base de la API y la clave
+secreta:
+
+```bash
+cp .env.example .env
+```
+
+Recuerde que el archivo `.env` no se encuentra bajo control de versiones.
+
 ## Recursos útiles
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
