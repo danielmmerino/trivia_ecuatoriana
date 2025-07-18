@@ -30,6 +30,7 @@ class PreguntasScreen extends StatefulWidget {
 class _PreguntasScreenState extends State<PreguntasScreen>
     with TickerProviderStateMixin {
   late Future<Question> _futureQuestion;
+  bool _showLoading = true;
   bool _showCorrect = false;
   bool _showIncorrect = false;
   bool _showCorrectAnswer = false;
@@ -53,7 +54,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _incorrectCount = widget.incorrectCount;
     _questionNumber = widget.questionNumber;
     _totalQuestions = widget.totalQuestions;
-    _futureQuestion = _fetchQuestion();
+    _loadQuestion();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -85,6 +86,21 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     try {
       await _audioPlayer.play(AssetSource(asset));
     } catch (_) {}
+  }
+
+  Future<void> _loadQuestion() async {
+    setState(() {
+      _showLoading = true;
+      _timerStarted = false;
+      _currentQuestion = null;
+      _futureQuestion = _fetchQuestion();
+    });
+    await _futureQuestion;
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    setState(() {
+      _showLoading = false;
+    });
   }
 
   void _onOptionSelected(Option selected, Option correct) {
@@ -121,10 +137,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           _showIncorrect = false;
           _showCorrectAnswer = false;
           _correctOption = null;
-          _timerStarted = false;
-          _currentQuestion = null;
-          _futureQuestion = _fetchQuestion();
         });
+        _loadQuestion();
       }
     });
   }
@@ -301,7 +315,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       body: FutureBuilder<Question>(
         future: _futureQuestion,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (_showLoading || !snapshot.hasData) {
             return _buildLoading();
           }
           final question = snapshot.data!;
