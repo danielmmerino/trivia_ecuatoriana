@@ -79,7 +79,10 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
     });
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => PreguntasScreen(category: _selectedCategory!),
+        builder: (_) => PreguntasScreen(
+          categoryId: _selectedCategory!.id,
+          category: _selectedCategory!,
+        ),
       ),
     );
   }

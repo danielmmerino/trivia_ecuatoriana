@@ -3,7 +3,6 @@ import 'preguntas_screen.dart';
 import 'new_question_screen.dart';
 import '../models/category.dart';
 import '../services/category_service.dart';
-import 'dart:math';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -25,52 +24,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Future<void> _openQuestion(Category category) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PreguntasScreen(category: category),
+        builder: (context) => PreguntasScreen(
+          categoryId: category.id,
+          category: category,
+        ),
       ),
     );
     if (result == true) {
       setState(() => _correctAnswers++);
     }
-  }
-
-  Future<void> _startRandomTrivia(List<Category> categories) async {
-    int correct = 0;
-    int incorrect = 0;
-    final random = Random();
-    for (var i = 0; i < 10; i++) {
-      if (!mounted) return;
-      final category = categories[random.nextInt(categories.length)];
-      final result = await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => PreguntasScreen(
-            categoryId: category.id,
-            correctCount: correct,
-            incorrectCount: incorrect,
-            questionNumber: i + 1,
-            totalQuestions: 10,
-          ),
-        ),
-      );
-      if (result == true) {
-        correct++;
-      } else {
-        incorrect++;
-      }
-    }
-    if (!mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Resultado'),
-        content: Text('Correctas: $correct\nIncorrectas: $incorrect'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -128,9 +90,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   FilledButton.icon(
                     onPressed: () {
                       if (categories.isNotEmpty) {
-
-                        _startRandomTrivia(categories);
-
+                        _openQuestion(categories.first);
                       }
                     },
                     icon: const Icon(Icons.play_arrow),

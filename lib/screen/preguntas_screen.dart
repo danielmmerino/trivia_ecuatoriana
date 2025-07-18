@@ -6,10 +6,10 @@ import '../models/category.dart';
 import '../services/question_service.dart';
 
 class PreguntasScreen extends StatefulWidget {
-
   const PreguntasScreen({
     super.key,
     required this.categoryId,
+    required this.category,
     this.correctCount = 0,
     this.incorrectCount = 0,
     this.questionNumber = 0,
@@ -17,18 +17,18 @@ class PreguntasScreen extends StatefulWidget {
   });
 
   final int categoryId;
+  final Category category; // <--- agregada
   final int correctCount;
   final int incorrectCount;
   final int questionNumber;
   final int totalQuestions;
-
 
   @override
   State<PreguntasScreen> createState() => _PreguntasScreenState();
 }
 
 class _PreguntasScreenState extends State<PreguntasScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late Future<Question> _futureQuestion;
   bool _showCorrect = false;
   bool _showIncorrect = false;
@@ -60,7 +60,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   }
 
   Future<Question> _fetchQuestion() async {
-    final questions = await QuestionService().fetchQuestions(widget.category.id);
+    final questions =
+        await QuestionService().fetchQuestions(widget.category.id);
     if (questions.isEmpty) {
       throw Exception('Sin preguntas disponibles');
     }
@@ -166,8 +167,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   void _onTimeExpired() {
     if (_showCorrect || _showIncorrect || _currentQuestion == null) return;
-    final correct =
-        _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
+    final correct = _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
     final incorrect =
         _currentQuestion!.opciones.firstWhere((o) => !o.esCorrecta);
     _onOptionSelected(incorrect, correct);
@@ -203,8 +203,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundImage:
-                  AssetImage('assets/${widget.category.icono}'),
+              backgroundImage: AssetImage('assets/${widget.category.icono}'),
             ),
             const SizedBox(width: 8),
             Text(widget.category.nombre),
