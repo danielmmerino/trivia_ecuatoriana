@@ -22,6 +22,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   bool _showCorrectAnswer = false;
   Option? _correctOption;
   late AnimationController _controller;
+  late AnimationController _timerController;
+  bool _timerStarted = false;
+  Question? _currentQuestion;
   late final AudioPlayer _audioPlayer;
 
   @override
@@ -32,6 +35,14 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
+    _timerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _onTimeExpired();
+        }
+      });
     _audioPlayer = AudioPlayer();
   }
 
@@ -50,6 +61,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   }
 
   void _onOptionSelected(Option selected, Option correct) {
+    _timerController.stop();
     if (selected.esCorrecta) {
       _playSound('sounds/correct.wav');
       setState(() {
@@ -139,9 +151,33 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         : const SizedBox.shrink();
   }
 
+  void _onTimeExpired() {
+    if (_showCorrect || _showIncorrect || _currentQuestion == null) return;
+    final correct =
+        _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
+    final incorrect =
+        _currentQuestion!.opciones.firstWhere((o) => !o.esCorrecta);
+    _onOptionSelected(incorrect, correct);
+  }
+
+  Widget _buildTimerBar() {
+    return AnimatedBuilder(
+      animation: _timerController,
+      builder: (context, child) {
+        return LinearProgressIndicator(
+          value: 1 - _timerController.value,
+          minHeight: 5,
+          backgroundColor: Colors.grey.shade300,
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _timerController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -169,8 +205,19 @@ class _PreguntasScreenState extends State<PreguntasScreen>
             return const Center(child: CircularProgressIndicator());
           }
           final question = snapshot.data!;
+          _currentQuestion ??= question;
+          if (!_timerStarted) {
+            _timerStarted = true;
+            _timerController.forward(from: 0.0);
+          }
           return Stack(
             children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _buildTimerBar(),
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
