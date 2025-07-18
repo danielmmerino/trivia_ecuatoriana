@@ -56,7 +56,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       });
     }
     _controller.forward(from: 0.0);
-    Future.delayed(const Duration(milliseconds: 800), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       Navigator.pop(context, selected.esCorrecta);
     });
   }
@@ -69,8 +69,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: const [
-                  Icon(Icons.check_circle,
-                      size: 80, color: Colors.green),
+                  Icon(Icons.check_circle, size: 80, color: Colors.green),
                   SizedBox(height: 8),
                   Text(
                     'Respuesta correcta',
@@ -86,47 +85,40 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         : const SizedBox.shrink();
   }
 
-  Widget _buildIncorrectAnimation() {
+  Widget _buildIncorrectWithAnswerAnimation() {
     return _showIncorrect
         ? Center(
             child: ScaleTransition(
               scale: _controller,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.cancel, size: 80, color: Colors.red),
-                  SizedBox(height: 8),
-                  Text(
+                children: [
+                  const Icon(Icons.cancel, size: 80, color: Colors.red),
+                  const SizedBox(height: 8),
+                  const Text(
                     'Respuesta incorrecta',
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.red),
                   ),
-                ],
-              ),
-            ),
-          )
-        : const SizedBox.shrink();
-  }
-
-  Widget _buildCorrectAnswerAnimation() {
-    return _showCorrectAnswer
-        ? Center(
-            child: ScaleTransition(
-              scale: _controller,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check_circle,
-                      size: 80, color: Colors.green),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Respuesta correcta: ${_correctOption?.opcion ?? ''}',
-                    style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Correcta: ${_correctOption?.opcion ?? ''}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
@@ -162,8 +154,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                     ),
                     const SizedBox(height: 24),
                     ...question.opciones.map((option) {
-                      final correctOption = question.opciones
-                          .firstWhere((e) => e.esCorrecta);
+                      final correctOption =
+                          question.opciones.firstWhere((e) => e.esCorrecta);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ElevatedButton(
@@ -180,8 +172,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                 ),
               ),
               _buildCorrectAnimation(),
-              _buildIncorrectAnimation(),
-              _buildCorrectAnswerAnimation(),
+              _buildIncorrectWithAnswerAnimation(),
             ],
           );
         },
