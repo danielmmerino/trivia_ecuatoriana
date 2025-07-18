@@ -16,7 +16,7 @@ class PreguntasScreen extends StatefulWidget {
     this.correctCount = 0,
     this.incorrectCount = 0,
     this.questionNumber = 1,
-    this.totalQuestions = 5,
+    this.totalQuestions = 10,
   });
 
   final int? categoryId;
@@ -284,8 +284,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundImage:
-                    AssetImage('assets/${_currentCategory.icono}'),
+                backgroundImage: AssetImage('assets/${_currentCategory.icono}'),
               ),
               const SizedBox(width: 8),
               Text(widget.categories != null
@@ -318,20 +317,19 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       );
     }
     return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundImage:
-                    AssetImage('assets/${_currentCategory.icono}'),
-              ),
-              const SizedBox(width: 8),
-              Text(widget.categories != null
-                  ? 'Trivia Aleatoria'
-                  : _currentCategory.nombre),
-            ],
-          ),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundImage: AssetImage('assets/${_currentCategory.icono}'),
+            ),
+            const SizedBox(width: 8),
+            Text(widget.categories != null
+                ? 'Trivia Aleatoria'
+                : _currentCategory.nombre),
+          ],
+        ),
       ),
       body: FutureBuilder<Question>(
         future: _futureQuestion,
