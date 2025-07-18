@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import '../models/question.dart';
 import '../services/question_service.dart';
@@ -20,6 +21,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   bool _showCorrectAnswer = false;
   Option? _correctOption;
   late AnimationController _controller;
+  late final AudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
+    _audioPlayer = AudioPlayer();
   }
 
   Future<Question> _fetchQuestion() async {
@@ -39,8 +42,15 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     return questions.first;
   }
 
+  Future<void> _playSound(String asset) async {
+    try {
+      await _audioPlayer.play(AssetSource(asset));
+    } catch (_) {}
+  }
+
   void _onOptionSelected(Option selected, Option correct) {
     if (selected.esCorrecta) {
+      _playSound('sounds/correct.wav');
       setState(() {
         _showCorrect = true;
         _showIncorrect = false;
@@ -48,6 +58,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         _correctOption = null;
       });
     } else {
+      _playSound('sounds/incorrect.wav');
       setState(() {
         _showIncorrect = true;
         _showCorrect = false;
@@ -125,6 +136,13 @@ class _PreguntasScreenState extends State<PreguntasScreen>
             ),
           )
         : const SizedBox.shrink();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
