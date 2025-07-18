@@ -34,6 +34,7 @@ dependencies:
   http: ^0.13.6
   flutter_dotenv: ^5.0.2
   shared_preferences: ^2.2.0
+  audioplayers: ^5.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,6 +65,7 @@ flutter:
   assets:
     - assets/data/pregunta.json
     - assets/imagenes/
+    - assets/sounds/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
