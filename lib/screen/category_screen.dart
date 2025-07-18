@@ -22,10 +22,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     _futureCategories = CategoryService().fetchCategories();
   }
 
-  Future<void> _openQuestion(int categoryId) async {
+  Future<void> _openQuestion(Category category) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PreguntasScreen(categoryId: categoryId),
+        builder: (context) => PreguntasScreen(category: category),
       ),
     );
     if (result == true) {
@@ -119,7 +119,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         return CategoryItem(
                           iconUrl: c.icono,
                           label: c.nombre,
-                          onTap: () => _openQuestion(c.id),
+                          onTap: () => _openQuestion(c),
                         );
                       },
                     ),
@@ -128,7 +128,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   FilledButton.icon(
                     onPressed: () {
                       if (categories.isNotEmpty) {
+
                         _startRandomTrivia(categories);
+
                       }
                     },
                     icon: const Icon(Icons.play_arrow),
