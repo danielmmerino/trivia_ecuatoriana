@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -8,16 +10,18 @@ import '../services/question_service.dart';
 class PreguntasScreen extends StatefulWidget {
   const PreguntasScreen({
     super.key,
-    required this.categoryId,
-    required this.category,
+    this.categoryId,
+    this.category,
+    this.categories,
     this.correctCount = 0,
     this.incorrectCount = 0,
     this.questionNumber = 1,
     this.totalQuestions = 5,
   });
 
-  final int categoryId;
-  final Category category; // <--- agregada
+  final int? categoryId;
+  final Category? category; // <--- agregada
+  final List<Category>? categories;
   final int correctCount;
   final int incorrectCount;
   final int questionNumber;
@@ -41,6 +45,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   bool _timerStarted = false;
   Question? _currentQuestion;
   late final AudioPlayer _audioPlayer;
+  late Category _currentCategory;
   late int _correctCount;
   late int _incorrectCount;
   late int _questionNumber;
@@ -54,6 +59,12 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _incorrectCount = widget.incorrectCount;
     _questionNumber = widget.questionNumber;
     _totalQuestions = widget.totalQuestions;
+    if (widget.categories != null && widget.categories!.isNotEmpty) {
+      _currentCategory =
+          widget.categories![Random().nextInt(widget.categories!.length)];
+    } else {
+      _currentCategory = widget.category!;
+    }
     _loadQuestion();
     _controller = AnimationController(
       vsync: this,
@@ -74,8 +85,12 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   }
 
   Future<Question> _fetchQuestion() async {
+    if (widget.categories != null && widget.categories!.isNotEmpty) {
+      _currentCategory =
+          widget.categories![Random().nextInt(widget.categories!.length)];
+    }
     final questions =
-        await QuestionService().fetchQuestions(widget.category.id);
+        await QuestionService().fetchQuestions(_currentCategory.id);
     if (questions.isEmpty) {
       throw Exception('Sin preguntas disponibles');
     }
@@ -218,7 +233,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
             turns: _loadingController,
             child: CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage('assets/${widget.category.icono}'),
+              backgroundImage: AssetImage('assets/${_currentCategory.icono}'),
               backgroundColor: Colors.transparent,
             ),
           ),
@@ -269,10 +284,13 @@ class _PreguntasScreenState extends State<PreguntasScreen>
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundImage: AssetImage('assets/${widget.category.icono}'),
+                backgroundImage:
+                    AssetImage('assets/${_currentCategory.icono}'),
               ),
               const SizedBox(width: 8),
-              Text(widget.category.nombre),
+              Text(widget.categories != null
+                  ? 'Trivia Aleatoria'
+                  : _currentCategory.nombre),
             ],
           ),
         ),
@@ -300,17 +318,20 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundImage: AssetImage('assets/${widget.category.icono}'),
-            ),
-            const SizedBox(width: 8),
-            Text(widget.category.nombre),
-          ],
-        ),
+        appBar: AppBar(
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundImage:
+                    AssetImage('assets/${_currentCategory.icono}'),
+              ),
+              const SizedBox(width: 8),
+              Text(widget.categories != null
+                  ? 'Trivia Aleatoria'
+                  : _currentCategory.nombre),
+            ],
+          ),
       ),
       body: FutureBuilder<Question>(
         future: _futureQuestion,
