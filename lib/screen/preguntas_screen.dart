@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../models/question.dart';
+import '../models/category.dart';
 import '../services/question_service.dart';
 
 class PreguntasScreen extends StatefulWidget {
-  const PreguntasScreen({super.key, required this.categoryId});
+  const PreguntasScreen({super.key, required this.category});
 
-  final int categoryId;
+  final Category category;
 
   @override
   State<PreguntasScreen> createState() => _PreguntasScreenState();
@@ -35,7 +36,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   }
 
   Future<Question> _fetchQuestion() async {
-    final questions = await QuestionService().fetchQuestions(widget.categoryId);
+    final questions = await QuestionService().fetchQuestions(widget.category.id);
     if (questions.isEmpty) {
       throw Exception('Sin preguntas disponibles');
     }
@@ -149,7 +150,17 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pregunta'),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundImage:
+                  AssetImage('assets/${widget.category.icono}'),
+            ),
+            const SizedBox(width: 8),
+            Text(widget.category.nombre),
+          ],
+        ),
       ),
       body: FutureBuilder<Question>(
         future: _futureQuestion,
