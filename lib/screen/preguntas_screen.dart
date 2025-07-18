@@ -17,6 +17,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   late Future<Question> _futureQuestion;
   bool _showCorrect = false;
   bool _showIncorrect = false;
+  bool _showCorrectAnswer = false;
+  Option? _correctOption;
   late AnimationController _controller;
 
   @override
@@ -37,21 +39,25 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     return questions.first;
   }
 
-  void _onOptionSelected(Option option) {
-    if (option.esCorrecta) {
+  void _onOptionSelected(Option selected, Option correct) {
+    if (selected.esCorrecta) {
       setState(() {
         _showCorrect = true;
         _showIncorrect = false;
+        _showCorrectAnswer = false;
+        _correctOption = null;
       });
     } else {
       setState(() {
         _showIncorrect = true;
         _showCorrect = false;
+        _showCorrectAnswer = true;
+        _correctOption = correct;
       });
     }
     _controller.forward(from: 0.0);
     Future.delayed(const Duration(milliseconds: 800), () {
-      Navigator.pop(context, option.esCorrecta);
+      Navigator.pop(context, selected.esCorrecta);
     });
   }
 
@@ -104,6 +110,31 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         : const SizedBox.shrink();
   }
 
+  Widget _buildCorrectAnswerAnimation() {
+    return _showCorrectAnswer
+        ? Center(
+            child: ScaleTransition(
+              scale: _controller,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check_circle,
+                      size: 80, color: Colors.green),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Respuesta correcta: ${_correctOption?.opcion ?? ''}',
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,10 +162,13 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                     ),
                     const SizedBox(height: 24),
                     ...question.opciones.map((option) {
+                      final correctOption = question.opciones
+                          .firstWhere((e) => e.esCorrecta);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ElevatedButton(
-                          onPressed: () => _onOptionSelected(option),
+                          onPressed: () =>
+                              _onOptionSelected(option, correctOption),
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size.fromHeight(48),
                           ),
@@ -147,6 +181,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
               ),
               _buildCorrectAnimation(),
               _buildIncorrectAnimation(),
+              _buildCorrectAnswerAnimation(),
             ],
           );
         },
