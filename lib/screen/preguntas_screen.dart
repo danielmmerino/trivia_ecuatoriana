@@ -36,6 +36,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   Option? _correctOption;
   late AnimationController _controller;
   late AnimationController _timerController;
+  late AnimationController _loadingController;
   bool _timerStarted = false;
   Question? _currentQuestion;
   late final AudioPlayer _audioPlayer;
@@ -65,6 +66,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           _onTimeExpired();
         }
       });
+    _loadingController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
     _audioPlayer = AudioPlayer();
   }
 
@@ -85,6 +89,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   void _onOptionSelected(Option selected, Option correct) {
     _timerController.stop();
+    _timerController.reset();
     final isCorrect = selected.esCorrecta;
     if (isCorrect) {
       _playSound('sounds/correct.wav');
@@ -120,7 +125,6 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           _currentQuestion = null;
           _futureQuestion = _fetchQuestion();
         });
-        _timerController.forward(from: 0.0);
       }
     });
   }
@@ -191,6 +195,26 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         : const SizedBox.shrink();
   }
 
+  Widget _buildLoading() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RotationTransition(
+            turns: _loadingController,
+            child: CircleAvatar(
+              radius: 40,
+              backgroundImage: AssetImage('assets/${widget.category.icono}'),
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text('Cargando...'),
+        ],
+      ),
+    );
+  }
+
   void _onTimeExpired() {
     if (_showCorrect || _showIncorrect || _currentQuestion == null) return;
     final correct = _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
@@ -217,6 +241,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   void dispose() {
     _controller.dispose();
     _timerController.dispose();
+    _loadingController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -277,10 +302,10 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         future: _futureQuestion,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildLoading();
           }
           final question = snapshot.data!;
-          _currentQuestion ??= question;
+          _currentQuestion = question;
           if (!_timerStarted) {
             _timerStarted = true;
             _timerController.forward(from: 0.0);
