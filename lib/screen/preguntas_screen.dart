@@ -12,8 +12,8 @@ class PreguntasScreen extends StatefulWidget {
     required this.category,
     this.correctCount = 0,
     this.incorrectCount = 0,
-    this.questionNumber = 0,
-    this.totalQuestions = 0,
+    this.questionNumber = 1,
+    this.totalQuestions = 5,
   });
 
   final int categoryId;
@@ -39,10 +39,19 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   bool _timerStarted = false;
   Question? _currentQuestion;
   late final AudioPlayer _audioPlayer;
+  late int _correctCount;
+  late int _incorrectCount;
+  late int _questionNumber;
+  late int _totalQuestions;
+  bool _quizFinished = false;
 
   @override
   void initState() {
     super.initState();
+    _correctCount = widget.correctCount;
+    _incorrectCount = widget.incorrectCount;
+    _questionNumber = widget.questionNumber;
+    _totalQuestions = widget.totalQuestions;
     _futureQuestion = _fetchQuestion();
     _controller = AnimationController(
       vsync: this,
@@ -76,8 +85,10 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   void _onOptionSelected(Option selected, Option correct) {
     _timerController.stop();
-    if (selected.esCorrecta) {
+    final isCorrect = selected.esCorrecta;
+    if (isCorrect) {
       _playSound('sounds/correct.wav');
+      _correctCount++;
       setState(() {
         _showCorrect = true;
         _showIncorrect = false;
@@ -86,6 +97,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       });
     } else {
       _playSound('sounds/incorrect.wav');
+      _incorrectCount++;
       setState(() {
         _showIncorrect = true;
         _showCorrect = false;
@@ -95,7 +107,21 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     }
     _controller.forward(from: 0.0);
     Future.delayed(const Duration(milliseconds: 2000), () {
-      Navigator.pop(context, selected.esCorrecta);
+      if (_questionNumber >= _totalQuestions) {
+        setState(() => _quizFinished = true);
+      } else {
+        setState(() {
+          _questionNumber++;
+          _showCorrect = false;
+          _showIncorrect = false;
+          _showCorrectAnswer = false;
+          _correctOption = null;
+          _timerStarted = false;
+          _currentQuestion = null;
+          _futureQuestion = _fetchQuestion();
+        });
+        _timerController.forward(from: 0.0);
+      }
     });
   }
 
@@ -197,6 +223,43 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (_quizFinished) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundImage: AssetImage('assets/${widget.category.icono}'),
+              ),
+              const SizedBox(width: 8),
+              Text(widget.category.nombre),
+            ],
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '¡Trivia finalizada!',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Text('Correctas: $_correctCount',
+                  style: const TextStyle(fontSize: 20)),
+              Text('Incorrectas: $_incorrectCount',
+                  style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Volver'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -235,16 +298,16 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.totalQuestions > 0)
+                    if (_totalQuestions > 0)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pregunta ${widget.questionNumber} de ${widget.totalQuestions}',
+                            'Pregunta $_questionNumber de $_totalQuestions',
                             style: const TextStyle(fontSize: 16),
                           ),
                           Text(
-                            'Correctas: ${widget.correctCount}  Incorrectas: ${widget.incorrectCount}',
+                            'Correctas: $_correctCount  Incorrectas: $_incorrectCount',
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 16),
