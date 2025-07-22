@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'preguntas_screen.dart';
 import '../services/category_service.dart';
+import '../models/category.dart';
 
 /// Screen that displays a roulette style wheel with different trivia
 /// categories. When the wheel is tapped it spins and stops on a random
@@ -18,9 +19,9 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  final List<String> _categories = [];
+  final List<Category> _categories = [];
   double _currentAngle = 0;
-  String? _selectedCategory;
+  Category? _selectedCategory;
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
       setState(() {
         _categories
           ..clear()
-          ..addAll(categories.map((e) => e.nombre));
+          ..addAll(categories);
       });
     } catch (_) {
       // In case of error keep categories empty
@@ -78,7 +79,10 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
     });
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const PreguntasScreen(categoryId: 1),
+        builder: (_) => PreguntasScreen(
+          categoryId: _selectedCategory!.id,
+          category: _selectedCategory!,
+        ),
       ),
     );
   }
@@ -123,7 +127,7 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
             const SizedBox(height: 20),
             if (_selectedCategory != null)
               Text(
-                'Categoría: $_selectedCategory',
+                'Categoría: ${_selectedCategory!.nombre}',
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -139,7 +143,7 @@ class _CategoryRandomScreenState extends State<CategoryRandomScreen>
 class _WheelPainter extends CustomPainter {
   _WheelPainter({required this.categories});
 
-  final List<String> categories;
+  final List<Category> categories;
   final List<Color> _colors = const [
     Colors.red,
     Colors.blue,
@@ -169,7 +173,7 @@ class _WheelPainter extends CustomPainter {
 
       final textPainter = TextPainter(
         text: TextSpan(
-          text: categories[i],
+          text: categories[i].nombre,
           style: const TextStyle(color: Colors.white, fontSize: 12),
         ),
         textDirection: TextDirection.ltr,
