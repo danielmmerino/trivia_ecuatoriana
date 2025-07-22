@@ -32,11 +32,37 @@ class _ScoreboardAnimationState extends State<ScoreboardAnimation>
       parent: _trophyController,
       curve: Curves.easeInOut,
     );
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {
-        final player = _players.removeLast();
-        _players.insert(0, player);
-      });
+
+    // Show the initial order for 2 seconds, then move the player
+    Future.delayed(const Duration(seconds: 2), _moveToThird);
+  }
+
+  void _moveToThird() {
+    if (!mounted) return;
+    setState(() {
+      final player = _players.removeLast();
+      _players.insert(2, player);
+    });
+    Future.delayed(const Duration(milliseconds: 1500), _moveToSecond);
+  }
+
+  void _moveToSecond() {
+    if (!mounted) return;
+    setState(() {
+      final player = _players.removeAt(2);
+      _players.insert(1, player);
+    });
+    Future.delayed(const Duration(milliseconds: 1500), _moveToFirst);
+  }
+
+  void _moveToFirst() {
+    if (!mounted) return;
+    setState(() {
+      final player = _players.removeAt(1);
+      _players.insert(0, player);
+    });
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
       _trophyController.forward();
     });
   }
