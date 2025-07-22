@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'preguntas_screen.dart';
 import 'new_question_screen.dart';
+import 'user_profile_screen.dart';
 import '../models/category.dart';
 import '../services/category_service.dart';
 
@@ -126,6 +127,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
             );
           },
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        onTap: (index) {
+          if (index == 1) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const UserProfileScreen(),
+              ),
+            );
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Trivias',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Ver mi perfil',
+          ),
+        ],
       ),
     );
   }
