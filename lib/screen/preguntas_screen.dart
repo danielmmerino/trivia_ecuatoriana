@@ -17,7 +17,7 @@ class PreguntasScreen extends StatefulWidget {
     this.correctCount = 0,
     this.incorrectCount = 0,
     this.questionNumber = 1,
-    this.totalQuestions = 10,
+    this.totalQuestions = 20,
   });
 
   final int? categoryId;
@@ -260,8 +260,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     if (incorrectOptions.isEmpty) return;
     incorrectOptions.shuffle();
     final remaining = [correct, incorrectOptions.first]..shuffle();
-    final toRemove =
-        _currentQuestion!.opciones.where((o) => !remaining.contains(o)).toList();
+    final toRemove = _currentQuestion!.opciones
+        .where((o) => !remaining.contains(o))
+        .toList();
     final bool wasAnimating = _timerController.isAnimating;
     if (wasAnimating) {
       _timerController.stop();
@@ -422,7 +423,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                       final correctOption =
                           question.opciones.firstWhere((e) => e.esCorrecta);
                       final button = ElevatedButton(
-                        onPressed: () => _onOptionSelected(option, correctOption),
+                        onPressed: () =>
+                            _onOptionSelected(option, correctOption),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(48),
                         ),
