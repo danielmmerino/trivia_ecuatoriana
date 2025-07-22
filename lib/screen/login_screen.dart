@@ -51,13 +51,13 @@ class LoginScreen extends StatelessWidget {
             ElevatedButton.icon(
               icon: const Icon(Icons.mail_outline),
               label: const Text('Registrarse con Google'),
-              onPressed: () => _loginSocial(context),
+              onPressed: null,
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.facebook),
               label: const Text('Registrarse con Facebook'),
-              onPressed: () => _loginSocial(context),
+              onPressed: null,
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
