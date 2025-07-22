@@ -262,6 +262,10 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     final remaining = [correct, incorrectOptions.first]..shuffle();
     final toRemove =
         _currentQuestion!.opciones.where((o) => !remaining.contains(o)).toList();
+    final bool wasAnimating = _timerController.isAnimating;
+    if (wasAnimating) {
+      _timerController.stop();
+    }
     setState(() {
       _wildcardsUsed[index] = true;
       _optionsToRemove = toRemove;
@@ -273,6 +277,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         _optionsToRemove = null;
       });
       _wildcardController.reset();
+      if (wasAnimating && !_timerController.isCompleted) {
+        _timerController.forward(from: _timerController.value);
+      }
     });
   }
 
