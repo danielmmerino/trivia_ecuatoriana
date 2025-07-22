@@ -167,9 +167,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         ? Center(
             child: ScaleTransition(
               scale: _controller,
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.check_circle, size: 80, color: Colors.green),
                   SizedBox(height: 8),
                   Text(
@@ -250,8 +250,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
 
   void _useWildcard(int index) {
     if (_currentQuestion == null || _wildcardsUsed[index]) return;
-    final correct =
-        _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
+    final correct = _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
     final incorrectOptions =
         _currentQuestion!.opciones.where((o) => !o.esCorrecta).toList();
     if (incorrectOptions.isEmpty) return;
