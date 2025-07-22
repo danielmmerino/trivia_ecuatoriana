@@ -7,6 +7,8 @@ import '../models/question.dart';
 import '../models/category.dart';
 import '../services/question_service.dart';
 import '../widgets/wildcard_button.dart';
+import '../services/result_service.dart';
+import '../widgets/scoreboard_animation.dart';
 
 class PreguntasScreen extends StatefulWidget {
   const PreguntasScreen({
@@ -56,6 +58,11 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   List<Option>? _visibleOptions;
   late AnimationController _wildcardController;
   List<Option>? _optionsToRemove;
+  final TextEditingController _nicknameController = TextEditingController();
+  bool _askPublish = false;
+  bool _showPublishInput = false;
+  bool _showScoreboard = false;
+  bool _publishing = false;
 
   @override
   void initState() {
@@ -152,7 +159,10 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _controller.forward(from: 0.0);
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (_questionNumber >= _totalQuestions) {
-        setState(() => _quizFinished = true);
+        setState(() {
+          _quizFinished = true;
+          _askPublish = true;
+        });
       } else {
         setState(() {
           _questionNumber++;
@@ -313,6 +323,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _loadingController.dispose();
     _wildcardController.dispose();
     _audioPlayer.dispose();
+    _nicknameController.dispose();
     super.dispose();
   }
 
@@ -335,25 +346,99 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           ),
         ),
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '¡Trivia finalizada!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Text('Correctas: $_correctCount',
-                  style: const TextStyle(fontSize: 20)),
-              Text('Incorrectas: $_incorrectCount',
-                  style: const TextStyle(fontSize: 20)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Volver'),
-              ),
-            ],
-          ),
+          child: _showScoreboard
+              ? ScoreboardAnimation(
+                  nickname: _nicknameController.text,
+                  score: _correctCount,
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      '¡Trivia finalizada!',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Text('Correctas: \$_correctCount',
+                        style: const TextStyle(fontSize: 20)),
+                    Text('Incorrectas: \$_incorrectCount',
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 20),
+                    if (_askPublish)
+                      Column(
+                        children: [
+                          const Text('¿Desea publicar su resultado?'),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _askPublish = false;
+                                    _showPublishInput = true;
+                                  });
+                                },
+                                child: const Text('Sí'),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _askPublish = false;
+                                  });
+                                },
+                                child: const Text('No'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    else if (_showPublishInput)
+                      Column(
+                        children: [
+                          TextField(
+                            controller: _nicknameController,
+                            decoration: const InputDecoration(labelText: 'Alias'),
+                          ),
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            onPressed: _publishing
+                                ? null
+                                : () async {
+                                    setState(() => _publishing = true);
+                                    try {
+                                      await ResultService().publishResult(
+                                          _correctCount,
+                                          _incorrectCount,
+                                          _nicknameController.text);
+                                      if (!mounted) return;
+                                      setState(() {
+                                        _showPublishInput = false;
+                                        _showScoreboard = true;
+                                      });
+                                    } catch (_) {
+                                      if (!mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text('Error al publicar resultados')),
+                                      );
+                                    } finally {
+                                      if (mounted) {
+                                        setState(() => _publishing = false);
+                                      }
+                                    }
+                                  },
+                            child: const Text('Publicar'),
+                          ),
+                        ],
+                      ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Volver'),
+                    ),
+                  ],
+                ),
         ),
       );
     }
