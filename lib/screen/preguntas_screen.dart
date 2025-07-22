@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import '../models/question.dart';
 import '../models/category.dart';
 import '../services/question_service.dart';
+import '../widgets/wildcard_button.dart';
 
 class PreguntasScreen extends StatefulWidget {
   const PreguntasScreen({
@@ -51,6 +52,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   late int _questionNumber;
   late int _totalQuestions;
   bool _quizFinished = false;
+  final List<bool> _wildcardsUsed = [false, false, false];
+  List<Option>? _visibleOptions;
 
   @override
   void initState() {
@@ -108,6 +111,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
       _showLoading = true;
       _timerStarted = false;
       _currentQuestion = null;
+      _visibleOptions = null;
       _futureQuestion = _fetchQuestion();
     });
     await _futureQuestion;
@@ -244,6 +248,20 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     );
   }
 
+  void _useWildcard(int index) {
+    if (_currentQuestion == null || _wildcardsUsed[index]) return;
+    final correct =
+        _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
+    final incorrectOptions =
+        _currentQuestion!.opciones.where((o) => !o.esCorrecta).toList();
+    if (incorrectOptions.isEmpty) return;
+    incorrectOptions.shuffle();
+    setState(() {
+      _wildcardsUsed[index] = true;
+      _visibleOptions = [correct, incorrectOptions.first]..shuffle();
+    });
+  }
+
   void _onTimeExpired() {
     if (_showCorrect || _showIncorrect || _currentQuestion == null) return;
     final correct = _currentQuestion!.opciones.firstWhere((o) => o.esCorrecta);
@@ -339,6 +357,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
           }
           final question = snapshot.data!;
           _currentQuestion = question;
+          _visibleOptions ??= List<Option>.from(question.opciones);
           if (!_timerStarted) {
             _timerStarted = true;
             _timerController.forward(from: 0.0);
@@ -371,13 +390,26 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                           const SizedBox(height: 16),
                         ],
                       ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: List.generate(3, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: WildcardButton(
+                            enabled: !_wildcardsUsed[index],
+                            onPressed: () => _useWildcard(index),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
                       question.pregunta,
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 24),
-                    ...question.opciones.map((option) {
+                    ...(_visibleOptions ?? question.opciones).map((option) {
                       final correctOption =
                           question.opciones.firstWhere((e) => e.esCorrecta);
                       return Padding(
