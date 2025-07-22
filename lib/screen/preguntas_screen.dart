@@ -359,9 +359,9 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
-                    Text('Correctas: \$_correctCount',
+                    Text('Correctas: $_correctCount',
                         style: const TextStyle(fontSize: 20)),
-                    Text('Incorrectas: \$_incorrectCount',
+                    Text('Incorrectas: $_incorrectCount',
                         style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 20),
                     if (_askPublish)
@@ -412,11 +412,6 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                                           _correctCount,
                                           _incorrectCount,
                                           _nicknameController.text);
-                                      if (!mounted) return;
-                                      setState(() {
-                                        _showPublishInput = false;
-                                        _showScoreboard = true;
-                                      });
                                     } catch (_) {
                                       if (!mounted) return;
                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -424,9 +419,12 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                                             content: Text('Error al publicar resultados')),
                                       );
                                     } finally {
-                                      if (mounted) {
-                                        setState(() => _publishing = false);
-                                      }
+                                      if (!mounted) return;
+                                      setState(() {
+                                        _publishing = false;
+                                        _showPublishInput = false;
+                                        _showScoreboard = true;
+                                      });
                                     }
                                   },
                             child: const Text('Publicar'),
