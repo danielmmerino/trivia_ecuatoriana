@@ -85,7 +85,7 @@ class _ScoreboardAnimationState extends State<ScoreboardAnimation>
             children: _players.asMap().entries.map((entry) {
               final index = entry.key;
               final player = entry.value;
-              final highlight = player['name'] == widget.nickname && index == 0;
+              final highlight = player['name'] == widget.nickname;
               return AnimatedContainer(
                 key: ValueKey(player['name']),
                 duration: const Duration(milliseconds: 500),
