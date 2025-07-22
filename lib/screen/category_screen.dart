@@ -108,7 +108,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       }
                     },
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Comenzar trivia'),
+                    label: const Text('Comenzar trivia Aleatoria'),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
