@@ -54,6 +54,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
   bool _quizFinished = false;
   final List<bool> _wildcardsUsed = [false, false, false];
   List<Option>? _visibleOptions;
+  late AnimationController _wildcardController;
+  List<Option>? _optionsToRemove;
 
   @override
   void initState() {
@@ -84,6 +86,8 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _loadingController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
           ..repeat();
+    _wildcardController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _audioPlayer = AudioPlayer();
   }
 
@@ -255,9 +259,20 @@ class _PreguntasScreenState extends State<PreguntasScreen>
         _currentQuestion!.opciones.where((o) => !o.esCorrecta).toList();
     if (incorrectOptions.isEmpty) return;
     incorrectOptions.shuffle();
+    final remaining = [correct, incorrectOptions.first]..shuffle();
+    final toRemove =
+        _currentQuestion!.opciones.where((o) => !remaining.contains(o)).toList();
     setState(() {
       _wildcardsUsed[index] = true;
-      _visibleOptions = [correct, incorrectOptions.first]..shuffle();
+      _optionsToRemove = toRemove;
+    });
+    _wildcardController.forward(from: 0.0).whenComplete(() {
+      if (!mounted) return;
+      setState(() {
+        _visibleOptions = remaining;
+        _optionsToRemove = null;
+      });
+      _wildcardController.reset();
     });
   }
 
@@ -288,6 +303,7 @@ class _PreguntasScreenState extends State<PreguntasScreen>
     _controller.dispose();
     _timerController.dispose();
     _loadingController.dispose();
+    _wildcardController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -389,6 +405,48 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                           const SizedBox(height: 16),
                         ],
                       ),
+                    Text(
+                      question.pregunta,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 24),
+                    ...(_visibleOptions ?? question.opciones).map((option) {
+                      final correctOption =
+                          question.opciones.firstWhere((e) => e.esCorrecta);
+                      final button = ElevatedButton(
+                        onPressed: () => _onOptionSelected(option, correctOption),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        child: Text(option.opcion),
+                      );
+                      if (_optionsToRemove?.contains(option) ?? false) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: AnimatedBuilder(
+                            animation: _wildcardController,
+                            builder: (context, child) {
+                              final scale = 1 + _wildcardController.value;
+                              final opacity = 1 - _wildcardController.value;
+                              return Opacity(
+                                opacity: opacity.clamp(0.0, 1.0),
+                                child: Transform.scale(
+                                  scale: scale,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: button,
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: button,
+                      );
+                    }).toList(),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: List.generate(3, (index) {
@@ -401,28 +459,6 @@ class _PreguntasScreenState extends State<PreguntasScreen>
                         );
                       }),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      question.pregunta,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 24),
-                    ...(_visibleOptions ?? question.opciones).map((option) {
-                      final correctOption =
-                          question.opciones.firstWhere((e) => e.esCorrecta);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () =>
-                              _onOptionSelected(option, correctOption),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(48),
-                          ),
-                          child: Text(option.opcion),
-                        ),
-                      );
-                    }).toList(),
                   ],
                 ),
               ),
